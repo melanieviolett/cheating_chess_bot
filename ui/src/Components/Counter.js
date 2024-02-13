@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 const Counter = () => {
   const [count, setCount] = useState(0);
 
+  // We can find these "links" in the controller module in the backend folder, "ChessController.java"
+  // This shows you how we create these api links to fetch what we need.
   const getCount = async () => {
     try {
       const response = await fetch('http://localhost:8080/api/chess/counter');
