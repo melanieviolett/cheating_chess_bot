@@ -20,7 +20,12 @@ function Game() {
   
       if (move === null) return false;
   
-      setGame(new Chess(game.fen()));
+      const newFen = game.fen();
+      setGame(new Chess(newFen));
+      setFen(newFen);
+  
+      console.log("Current FEN:", newFen);
+  
       return true;
     } catch (error) {
       console.error("Error making move: ", error);
@@ -28,6 +33,7 @@ function Game() {
     }
   }
   
+
   return (
     <div className="board">
       <Chessboard position={fen} onPieceDrop={onDrop} />
