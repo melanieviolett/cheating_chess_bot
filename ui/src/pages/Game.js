@@ -136,7 +136,7 @@ function Game() {
       {showCheatIndicator && <CheatIndicator show={showCheatIndicator} />}
       <div className="turn-indication flex flex-row mt-4">
         <p className="text-4xl font-bold text-center">
-          {isAITurn ? "AI's turn" : "Your turn"}
+          {isAITurn ? "AI's turn" : game.inCheck() ? "Your turn, currently in check..." : "Your turn"}
         </p>
         <button className="ml-10 btn pl-4 pr-4 font-bold text-white bg-purple-600 border border-purple-700 rounded" onClick={handleRestart}> Restart </button>
       </div>
