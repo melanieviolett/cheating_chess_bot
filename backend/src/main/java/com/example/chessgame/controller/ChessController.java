@@ -26,6 +26,7 @@ public class ChessController {
 
     @PostMapping("/move")
     public String getMove(@RequestBody FenRequest fenRequest) {
+        int counter = 0;
         String fenString = fenRequest.getFenString();
         String retString = fenString;
         int depth = 5; // we can change this to whatever depth we want. Higher -> closer to the worst move possible.
@@ -51,11 +52,13 @@ public class ChessController {
 
         // Apply the worst move to the board
         if (worstMove != null) {
+            counter++;
             board.doMove(worstMove);
             System.out.println("Worst move: " + worstMove);
             retString = board.getFen();
             System.out.println("Return string: " + retString);
-
+            
+            System.out.println("Counter: " + counter);
         }
 
         return retString;

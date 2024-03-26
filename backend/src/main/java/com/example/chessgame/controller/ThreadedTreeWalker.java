@@ -240,23 +240,29 @@ public class ThreadedTreeWalker {
         if (isMaximisingPlayer) {
             bestMove = Double.NEGATIVE_INFINITY;
             for (Move move : possibleNextMoves) {
-                board.doMove(move);
-                bestMove = Math.max(bestMove, minimax(depth - 1, alpha, beta, !isMaximisingPlayer, board));
-                board.undoMove();
-                alpha = Math.max(alpha, bestMove);
-                if (beta <= alpha) {
-                    return bestMove;
+                if (initialBoard.getPiece(move.getFrom()).getPieceSide() == playerColor) 
+                {                    
+                    board.doMove(move);
+                    bestMove = Math.max(bestMove, minimax(depth - 1, alpha, beta, !isMaximisingPlayer, board));
+                    board.undoMove();
+                    alpha = Math.max(alpha, bestMove);
+                    if (beta <= alpha) {
+                        return bestMove;
+                    }
                 }
             }
         } else {
             bestMove = Double.POSITIVE_INFINITY;
             for (Move move : possibleNextMoves) {
-                board.doMove(move);
-                bestMove = Math.min(bestMove, minimax(depth - 1, alpha, beta, !isMaximisingPlayer, board));
-                board.undoMove();
-                beta = Math.min(beta, bestMove);
-                if (beta <= alpha) {
-                    return bestMove;
+                if (initialBoard.getPiece(move.getFrom()).getPieceSide() == playerColor) 
+                {
+                    board.doMove(move);
+                    bestMove = Math.min(bestMove, minimax(depth - 1, alpha, beta, !isMaximisingPlayer, board));
+                    board.undoMove();
+                    beta = Math.min(beta, bestMove);
+                    if (beta <= alpha) {
+                        return bestMove;
+                    }
                 }
             }
         }

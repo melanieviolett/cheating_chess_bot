@@ -11,8 +11,15 @@ const requestAIMove = async (fenString) => {
                 },
                 body: JSON.stringify({ fenString: fenString })
             });
-            const result = await response.json();
-            if (result) { return true; }
+            if (response.ok)
+            {
+                const result = await response.text();
+                return result;
+            }
+            else
+            {
+                throw new Error('Request failed');
+            }
         } catch (error) {
           console.error('Error:', error);
         }

@@ -12,6 +12,28 @@ function Game() {
   const [isAITurn, setIsAITurn] = useState(false);
   const [showCheatIndicator, setShowCheatIndicator] = useState(false);
 
+  const handleRestart = () => {
+    setGame(new Chess());
+    setUserIsWhitePiece(true);
+  }
+
+  const showWinner = () =>
+  {
+    let loser = game.turn();
+    let msg = 'Game Over!';
+
+    console.log(loser, userIsWhitePiece);
+    if ((loser !== 'white' && userIsWhitePiece) || (loser !== 'black' && !userIsWhitePiece))
+    {
+      msg += ' You win, good job beating the worst AI ever!';
+    }
+    else
+    {
+      msg += ' You lost.... how??';
+    }
+    alert(msg);
+  }
+
   const handleSideSwitch = () =>
   {
     setIsAITurn(false);
@@ -25,10 +47,9 @@ function Game() {
   }
 
   useEffect(() => {
-    if (game.isCheckmate() || game.isDraw() || game.isStalemate() || game.isThreefoldRepetition() || game.isInsufficientMaterial()) {
-      alert('Game over');
-      setGame(new Chess());
-      setUserIsWhitePiece(true);
+    if (game.isGameOver()) {
+      showWinner();
+      return;
     }
     else
     {
@@ -43,14 +64,19 @@ function Game() {
         else
         {
 
-          requestAIMove(fen).then((bool) => {
-            console.log(bool);
+          requestAIMove(fen).then((fenString) => {
+            console.log(fenString);
+
+            setGame(new Chess(fenString));
+            setFen(fenString);
+        
             // this will return the new fenString from the move made on java side
             // would need to set the game board with the new fen string
   
             setIsAITurn(false);
           }).catch((error) => {
             console.error('Error requesting AI move:', error);
+            setIsAITurn(true);
           });
         }
       }
@@ -103,10 +129,11 @@ function Game() {
         boardOrientation={userIsWhitePiece ? "white" : "black"}  
       />
       {showCheatIndicator && <CheatIndicator show={showCheatIndicator} />}
-      <div className="turn-indication mt-4">
+      <div className="turn-indication flex flex-row mt-4">
         <p className="text-4xl font-bold text-center">
           {isAITurn ? "AI's turn" : "Your turn"}
         </p>
+        <button className="ml-10 btn pl-4 pr-4 font-bold text-white bg-purple-600 border border-purple-700 rounded" onClick={handleRestart}> Restart </button>
       </div>
     </div>
   );
