@@ -13,6 +13,7 @@ function Game() {
   const [showCheatIndicator, setShowCheatIndicator] = useState(false);
 
   const handleRestart = () => {
+    setIsAITurn(false);
     setGame(new Chess());
     setUserIsWhitePiece(true);
   }
@@ -23,15 +24,16 @@ function Game() {
     let msg = 'Game Over!';
 
     console.log(loser, userIsWhitePiece);
-    if ((loser !== 'white' && userIsWhitePiece) || (loser !== 'black' && !userIsWhitePiece))
-    {
-      msg += ' You win, good job beating the worst AI ever!';
-    }
-    else
+    if ((loser === 'w' && userIsWhitePiece) || (loser === 'b' && !userIsWhitePiece))
     {
       msg += ' You lost.... how??';
     }
+    else
+    {
+      msg += ' You win, good job beating the worst AI ever!';
+    }
     alert(msg);
+    handleRestart();
   }
 
   const handleSideSwitch = () =>
@@ -122,12 +124,15 @@ function Game() {
   
 
   return (
-    <div className="board flex flex-col items-center">
-      <Chessboard 
-        position={fen} 
-        onPieceDrop={onDrop} 
-        boardOrientation={userIsWhitePiece ? "white" : "black"}  
-      />
+    <div className="board flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center pt-20">
+        <Chessboard 
+          boardWidth={600}
+          position={fen} 
+          onPieceDrop={onDrop} 
+          boardOrientation={userIsWhitePiece ? "white" : "black"}  
+        />
+      </div>
       {showCheatIndicator && <CheatIndicator show={showCheatIndicator} />}
       <div className="turn-indication flex flex-row mt-4">
         <p className="text-4xl font-bold text-center">
