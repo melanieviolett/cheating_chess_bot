@@ -43,16 +43,20 @@ public class ChessController {
         Side playerColor = board.getSideToMove();
         System.out.println(playerColor);
 
-        // ThreadedTreeWalker walker = new ThreadedTreeWalker(board, playerColor, depth);
-        // walker.start();
+        ThreadedTreeWalker walker = new ThreadedTreeWalker(board, playerColor, depth);
+        walker.start();
 
-        // Move worstMove = walker.getWorstMove();
-        
+        Move worstMove = walker.getWorstMove();
+        System.out.println(worstMove);
+
         // Apply the worst move to the board
-        // if (worstMove != null) {
-        //     board.doMove(worstMove);
-        //     retString = board.getFen();
-        // }
+        if (worstMove != null) {
+            board.doMove(worstMove);
+            System.out.println("Worst move: " + worstMove);
+            retString = board.getFen();
+            System.out.println("Return string: " + retString);
+
+        }
 
         return retString;
     }
