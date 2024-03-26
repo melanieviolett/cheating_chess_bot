@@ -1,6 +1,5 @@
 import { Container } from "@mui/material";
-import Game from "./Components/Game";
-import Counter from "./Components/Counter";
+import Game from "./pages/Game";
 
 function App() {
   return (
