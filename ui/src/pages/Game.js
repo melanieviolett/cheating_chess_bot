@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 import '../index.css';
-import requestAIMove from "../api/aiMoveHandler.js";
+import {requestAIMove, getWorstScoreAverage} from "../api/aiMoveHandler.js";
 import CheatIndicator from "../Components/CheatIndicator.js";
 
 function Game() {
@@ -18,12 +18,11 @@ function Game() {
     setUserIsWhitePiece(true);
   }
 
-  const showWinner = () =>
+  const showWinner = async () =>
   {
     let loser = game.turn();
     let msg = 'Game Over!';
 
-    console.log(loser, userIsWhitePiece);
     if ((loser === 'w' && userIsWhitePiece) || (loser === 'b' && !userIsWhitePiece))
     {
       msg += ' You lost.... how??';
@@ -32,7 +31,16 @@ function Game() {
     {
       msg += ' You win, good job beating the worst AI ever!';
     }
+
     alert(msg);
+
+    try {
+      console.log("The AI had an average move score of: ", await getWorstScoreAverage());
+    } catch (error)
+    {
+      console.error(error);
+    }
+
     handleRestart();
   }
 
@@ -50,15 +58,16 @@ function Game() {
 
   useEffect(() => {
     if (game.isGameOver()) {
+      setTimeout(() => {
+        // allow animation to finish.
+      }, 5000);
       showWinner();
       return;
     }
     else
     {
       if (isAITurn) { 
-        // probably check for if game is in check first then switch teams, 
-        // then if not have ai make their move. (ai's turn effectively gets skipped if they swap teams)
-                  // game is in check when it is AI turns, switch teams (this would effectively make it the user's turn again)
+        // if game is in check on Ai's turn... initiate cheat mode!
         if (game.isCheck())
         {
           handleSideSwitch();
@@ -67,15 +76,12 @@ function Game() {
         {
 
           requestAIMove(fen).then((fenString) => {
-            console.log(fenString);
 
+            // set the new fen string returned as the game board.
             setGame(new Chess(fenString));
             setFen(fenString);
-        
-            // this will return the new fenString from the move made on java side
-            // would need to set the game board with the new fen string
-  
             setIsAITurn(false);
+
           }).catch((error) => {
             console.error('Error requesting AI move:', error);
             setIsAITurn(true);
@@ -110,8 +116,6 @@ function Game() {
       const newFen = game.fen();
       setGame(new Chess(newFen));
       setFen(newFen);
-  
-      console.log("Current FEN:", newFen);
 
       // set up for AI to make their turn
       setIsAITurn(true);

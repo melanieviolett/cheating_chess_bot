@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:8080/api/chess';
 
-const requestAIMove = async (fenString) => {
+export const requestAIMove = async (fenString) => {
     if (fenString)
     {
         try {
@@ -26,4 +26,22 @@ const requestAIMove = async (fenString) => {
     }
 };
 
-export default requestAIMove;
+export const getWorstScoreAverage = async () => {
+    try {
+        const response = await fetch(BASE_URL + '/worstScoreAverage');
+        if (response.ok)
+        {
+            const worstScoreAverage = await response.json();
+            return worstScoreAverage;
+        }
+        else 
+        {
+            console.error('Error fetching worst score average:', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+

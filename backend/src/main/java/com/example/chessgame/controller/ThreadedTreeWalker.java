@@ -19,7 +19,7 @@ public class ThreadedTreeWalker {
     private Side playerColor;
     private double alpha = Double.NEGATIVE_INFINITY;
     private double beta = Double.POSITIVE_INFINITY;
-    private static double lowestScore = Double.POSITIVE_INFINITY;
+    private double lowestScore = Double.POSITIVE_INFINITY;
 
     public double[][] reverseArray(double[][] arr) {
 
@@ -118,6 +118,11 @@ public class ThreadedTreeWalker {
         this.playerColor = playerColor;
     }
 
+    public double getWorstScore()
+    {
+        return lowestScore;
+    }
+
     public Move getWorstMove() {
         return worstMove;
     }
@@ -142,7 +147,8 @@ public class ThreadedTreeWalker {
                     boardCopy.doMove(move);
 
                     // Explore our subtrees of finding the worst move, get that score
-                    double score = minimax(depth, alpha, beta, true, boardCopy);
+                    System.out.println("Lowest score initially is: " + lowestScore);
+                    double score = minimax(depth, alpha, beta, false, boardCopy);
                     System.out.println("score is " + score);
 
                     // Update worst move from comparing the score of the most current move we have
@@ -161,13 +167,15 @@ public class ThreadedTreeWalker {
         }
 
         // Wait for all threads to finish
+        long timeout = 5000;
         for (Thread thread : threads) {
             try {
-                thread.join();
+                thread.join(timeout);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
         System.out.println("Lowest score among all threads: " + lowestScore);
     }
 
@@ -229,41 +237,41 @@ public class ThreadedTreeWalker {
     // alpha beta pruning reduces the number of nodes evaluated by the minimax algo
     // maximising player -> the player whose goal is to maximize their score or evaluation function
     public double minimax(int depth, double alpha, double beta, boolean isMaximisingPlayer, Board board) {
-
+        
         if (depth == 0) {
             return -evaluateBoard(board);
         }
 
         List<Move> possibleNextMoves = board.legalMoves();
+        if (possibleNextMoves.isEmpty())
+        {
+            return -evaluateBoard(board);
+        }
         double bestMove;
 
         if (isMaximisingPlayer) {
             bestMove = Double.NEGATIVE_INFINITY;
-            for (Move move : possibleNextMoves) {
-                if (initialBoard.getPiece(move.getFrom()).getPieceSide() == playerColor) 
-                {                    
+            for (Move move : possibleNextMoves) {          
                     board.doMove(move);
-                    bestMove = Math.max(bestMove, minimax(depth - 1, alpha, beta, !isMaximisingPlayer, board));
+                    double someMove = minimax(depth - 1, alpha, beta, !isMaximisingPlayer, board);
+                    bestMove = Math.max(bestMove, someMove);
                     board.undoMove();
                     alpha = Math.max(alpha, bestMove);
                     if (beta <= alpha) {
                         return bestMove;
                     }
-                }
             }
         } else {
             bestMove = Double.POSITIVE_INFINITY;
             for (Move move : possibleNextMoves) {
-                if (initialBoard.getPiece(move.getFrom()).getPieceSide() == playerColor) 
-                {
                     board.doMove(move);
-                    bestMove = Math.min(bestMove, minimax(depth - 1, alpha, beta, !isMaximisingPlayer, board));
+                    double someMove = minimax(depth - 1, alpha, beta, !isMaximisingPlayer, board);
+                    bestMove = Math.min(bestMove, someMove);
                     board.undoMove();
                     beta = Math.min(beta, bestMove);
                     if (beta <= alpha) {
                         return bestMove;
                     }
-                }
             }
         }
         return bestMove;
