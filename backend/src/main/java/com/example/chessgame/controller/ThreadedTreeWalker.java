@@ -147,9 +147,7 @@ public class ThreadedTreeWalker {
                     boardCopy.doMove(move);
 
                     // Explore our subtrees of finding the worst move, get that score
-                    System.out.println("Lowest score initially is: " + lowestScore);
                     double score = minimax(depth, alpha, beta, false, boardCopy);
-                    System.out.println("score is " + score);
 
                     // Update worst move from comparing the score of the most current move we have
                     // found.
@@ -256,7 +254,7 @@ public class ThreadedTreeWalker {
                     double someMove = minimax(depth - 1, alpha, beta, !isMaximisingPlayer, board);
                     bestMove = Math.max(bestMove, someMove);
                     board.undoMove();
-                    alpha = Math.max(alpha, bestMove);
+                    alpha = Math.min(alpha, bestMove);
                     if (beta <= alpha) {
                         return bestMove;
                     }
@@ -268,7 +266,7 @@ public class ThreadedTreeWalker {
                     double someMove = minimax(depth - 1, alpha, beta, !isMaximisingPlayer, board);
                     bestMove = Math.min(bestMove, someMove);
                     board.undoMove();
-                    beta = Math.min(beta, bestMove);
+                    beta = Math.max(beta, bestMove);
                     if (beta <= alpha) {
                         return bestMove;
                     }

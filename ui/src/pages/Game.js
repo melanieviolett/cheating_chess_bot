@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 import '../index.css';
-import {requestAIMove, getWorstScoreAverage} from "../api/aiMoveHandler.js";
+import {requestAIMove, getWorstScoreAverage, getTimeAverage, resetCounts} from "../api/aiMoveHandler.js";
 import CheatIndicator from "../Components/CheatIndicator.js";
 
 function Game() {
@@ -12,10 +12,12 @@ function Game() {
   const [isAITurn, setIsAITurn] = useState(false);
   const [showCheatIndicator, setShowCheatIndicator] = useState(false);
 
-  const handleRestart = () => {
+  const handleRestart = async () => {
     setIsAITurn(false);
     setGame(new Chess());
     setUserIsWhitePiece(true);
+    console.log(await getTimeAverage(), "ms");
+    await resetCounts();
   }
 
   const showWinner = async () =>
@@ -75,13 +77,13 @@ function Game() {
         else
         {
 
-          requestAIMove(fen).then((fenString) => {
+          requestAIMove(fen).then( async (fenString) => {
 
             // set the new fen string returned as the game board.
             setGame(new Chess(fenString));
             setFen(fenString);
             setIsAITurn(false);
-
+            console.log( await getWorstScoreAverage());
           }).catch((error) => {
             console.error('Error requesting AI move:', error);
             setIsAITurn(true);

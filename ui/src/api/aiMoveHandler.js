@@ -44,4 +44,31 @@ export const getWorstScoreAverage = async () => {
     }
 };
 
+export const getTimeAverage = async () => {
+    try {
+        const response = await fetch(BASE_URL + '/timeAverage');
+        if (response.ok)
+        {
+            const timeAverage = await response.json();
+            return timeAverage;
+        }
+        else 
+        {
+            console.error('Error fetching worst score average:', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+export const resetCounts = async () => {
+    try {
+        const response = await fetch(BASE_URL + '/resetCounts');
+        return null;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
 
